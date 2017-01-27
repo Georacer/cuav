@@ -135,6 +135,8 @@ def playback(filename, images):
 
 
 while True:
+    print("Scanning for images in")
+    print(opts.imagedir)
     images = scan_image_directory(opts.imagedir)
     if len(images) == 0:
         print("No images supplied")
