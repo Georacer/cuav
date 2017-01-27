@@ -1,0 +1,13 @@
+/home/george/.local/lib/python2.7/site-packages/cuav-1.3.3-py2.7-linux-x86_64.egg
+/home/george/.local/bin/pgm_convert.py
+/home/george/.local/bin/geotag.py
+/home/george/.local/bin/cuav_benchmark.py
+/home/george/.local/bin/geosearch.py
+/home/george/.local/bin/thermal_view.py
+/home/george/.local/bin/cuav_lens.py
+/home/george/.local/bin/agl_mission.py
+/home/george/.local/bin/mp_slipmap.py
+/home/george/.local/bin/mp_tile.py
+/home/george/.local/bin/mavflightview.py
+/home/george/.local/bin/MAVExplorer.py
+/home/george/.local/bin/mavproxy.py
