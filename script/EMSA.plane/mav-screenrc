@@ -1,0 +1,11 @@
+source /etc/screenrc # source the default settings file
+
+# We won't use these because the camera will be ran by MAVProxy
+#screen -t "camera"
+#stuff "./start_cam.sh
+#"
+
+screen -t "MAVProxy"
+stuff "./start_uav.sh
+"
+screen -t "bash"
