@@ -10,6 +10,7 @@ camera set aircraft_address 192.168.1.100
 camera set gcs_view_port 7543
 camera set aircraft_port 7544
 
+camera set use_bsend2 false
 # camera set gcs_address2 103.22.144.67
 # camera set aircraft_address2 103.22.144.67
 # camera set gcs_view_port2 10407
