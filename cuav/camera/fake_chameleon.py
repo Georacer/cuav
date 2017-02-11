@@ -13,7 +13,7 @@ from cuav.image import scanner
 
 error = chameleon.error
 continuous_mode = False
-fake = 'fake_chameleon.pgm'
+fake = 'fake_chameleon.jpg'
 frame_counter = 0
 trigger_time = 0
 frame_rate = 7.5
@@ -35,7 +35,7 @@ def load_image(filename):
         return fake_img.array
     img = cv.LoadImage(filename)
     array = numpy.asarray(cv.GetMat(img))
-    grey = numpy.zeros((960,1280), dtype='uint8')
+    grey = numpy.zeros((1200,1600), dtype='uint8')
     scanner.rebayer(array, grey)
     return grey
     
@@ -48,33 +48,45 @@ def capture(h, timeout, img):
         time.sleep(due - tnow)
         timeout -= int(due*1000)
     # wait for a new image to appear
+    basepath = '/home/george/flea3_test/'
     while True:
         try:
-            filename = os.path.realpath(fake)
+            # filename = os.path.realpath(fake)
+            filename = basepath + fake
+            # print('Got filename ' + filename)
         except Exception:
             filename = fake
             pass
         if filename != fake:
             break
-    frame_time = cuav_util.parse_frame_time(filename)
+    # frame_time = cuav_util.parse_frame_time(filename)
+    frame_time = time.mktime(time.gmtime())
+    # print('Got base frame time %g' % frame_time)
     while (frame_time == last_frame_time or frame_time == 0) and timeout > 0:
         timeout -= 10
         time.sleep(0.01)
         try:
-            filename = os.path.realpath(fake)
+            # filename = os.path.realpath(fake)
+            filename = basepath + fake
+            # print('Got filename ' + filename)
         except Exception:
             filename = fake
             pass
         if filename == fake:
             continue
-        frame_time = cuav_util.parse_frame_time(filename)
-
+        # frame_time = cuav_util.parse_frame_time(filename)
+        frame_time = time.mktime(time.gmtime())
+        print('Got frame time %f' % frame_time
+)
     if last_frame_time == frame_time:
+        print("timeout waiting for fake image")
         raise chameleon.error("timeout waiting for fake image")
     last_frame_time = frame_time
     try:
+        print('loading image ' + filename)
         fake_img = load_image(filename)
     except Exception, msg:
+        print('Error trying to load image')
         raise chameleon.error('missing %s' % fake)
     frame_counter += 1
     img.data = fake_img.data
