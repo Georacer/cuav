@@ -76,14 +76,14 @@ def capture(h, timeout, img):
             continue
         # frame_time = cuav_util.parse_frame_time(filename)
         frame_time = time.mktime(time.gmtime())
-        print('Got frame time %f' % frame_time
+        # print('Got frame time %f' % frame_time
 )
     if last_frame_time == frame_time:
-        print("timeout waiting for fake image")
+        # print("timeout waiting for fake image")
         raise chameleon.error("timeout waiting for fake image")
     last_frame_time = frame_time
     try:
-        print('loading image ' + filename)
+        # print('loading image ' + filename)
         fake_img = load_image(filename)
     except Exception, msg:
         print('Error trying to load image')

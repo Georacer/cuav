@@ -395,7 +395,7 @@ class CameraModule(mp_module.MPModule):
         print('Getting camare base_time')
         while frame_time is None:
             try:
-                im = numpy.zeros((960,1280),dtype='uint8' if self.camera_settings.depth==8 else 'uint16')
+                im = numpy.zeros((1200,1600),dtype='uint8' if self.camera_settings.depth==8 else 'uint16')
                 base_time = time.time()
                 chameleon.trigger(h, False)
                 frame_time, frame_counter, shutter = chameleon.capture(h, 1000, im)
@@ -465,9 +465,9 @@ class CameraModule(mp_module.MPModule):
                     chameleon.trigger(h, True)
 
                 if self.camera_settings.depth == 16:
-                    im = numpy.zeros((960,1280),dtype='uint16')
+                    im = numpy.zeros((1200,1600),dtype='uint16')
                 else:
-                    im = numpy.zeros((960,1280),dtype='uint8')
+                    im = numpy.zeros((1200,1600),dtype='uint8')
                 if last_gamma != self.camera_settings.gamma:
                     chameleon.set_gamma(h, self.camera_settings.gamma)
                     last_gamma = self.camera_settings.gamma
@@ -563,7 +563,7 @@ class CameraModule(mp_module.MPModule):
                 scan_parms['MetersPerPixel'] = self.camera_settings.mpp100 * altitude / 100.0
             
             t1 = time.time()
-            im_full = numpy.zeros((960,1280,3),dtype='uint8')
+            im_full = numpy.zeros((1200,1600,3),dtype='uint8')
             im_640 = numpy.zeros((480,640,3),dtype='uint8')
             scanner.debayer(im, im_full)
             if self.camera_settings.rotate180:
@@ -962,7 +962,7 @@ class CameraModule(mp_module.MPModule):
                 img = cv.LoadImage(filename)
                 if img is None:
                     continue
-                if img.width == 1280:
+                if img.width == 1600:
                     display_img = cv.CreateImage((640, 480), 8, 3)
                     cv.Resize(img, display_img)
                 else:
@@ -973,7 +973,7 @@ class CameraModule(mp_module.MPModule):
 
                 if obj.priority != 0:
                     print("Downloaded image %s (width %u)" % (filename, img.width))
-                    if img.width >= 1280:
+                    if img.width >= 1600:
                         tag_color = (0,0,255)
                     else:
                         tag_color = (0,255,0)
