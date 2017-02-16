@@ -57,9 +57,12 @@ def get_base_time():
 
   while frame_time is None:
     try:
+      print('py_capture.py/get_base_time: trying to capture')
       base_time = time.time()
       im = numpy.zeros((960,1280),dtype='uint8' if opts.depth==8 else 'uint16')
+      print('py_capture.py/get_base_time: triggering')
       chameleon.trigger(h, False)
+      print('py_capture.py/get_base_time: capturing')
       frame_time, frame_counter, shutter = chameleon.capture(h, 1000, im)
       base_time -= frame_time
     except chameleon.error:
@@ -72,6 +75,7 @@ def get_base_time():
         h = chameleon.open(not opts.mono, opts.depth, opts.brightness)
         if opts.framerate != 0:
           chameleon.set_framerate(h, opts.framerate)
+  print('py_capture.py: get_base_time exiting')
   return h, base_time, frame_time
 
 

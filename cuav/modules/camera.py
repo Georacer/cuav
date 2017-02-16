@@ -531,13 +531,20 @@ class CameraModule(mp_module.MPModule):
         frame_count = 0
         while not self.unload_event.wait(0.02):
             if self.save_queue.empty():
+                # print('Tried to save image but queue is empty')
                 continue
             (frame_time,im) = self.save_queue.get()
             rawname = "raw%s" % cuav_util.frame_time(frame_time)
             frame_count += 1
+            # print('Found %d frames in queue' % (frame_count))
             if self.camera_settings.save_pgm != 0 and self.flying:
                 if frame_count % self.camera_settings.save_pgm == 0:
                     chameleon.save_pgm('%s/%s.pgm' % (raw_dir, rawname), im)
+                    # print('Saving image')
+                # else:
+                    # print('Failed weird test')
+            # else:
+                # print("Not flying -> not saving image")
 
     def scan_thread(self):
         '''image scanning thread'''

@@ -48,7 +48,8 @@ def capture(h, timeout, img):
         time.sleep(due - tnow)
         timeout -= int(due*1000)
     # wait for a new image to appear
-    basepath = '/home/george/flea3_test/'
+    home_path = os.path.expanduser("~")
+    basepath = home_path + '/flea3_test/'
     while True:
         try:
             # filename = os.path.realpath(fake)
@@ -77,7 +78,6 @@ def capture(h, timeout, img):
         # frame_time = cuav_util.parse_frame_time(filename)
         frame_time = time.mktime(time.gmtime())
         # print('Got frame time %f' % frame_time
-)
     if last_frame_time == frame_time:
         # print("timeout waiting for fake image")
         raise chameleon.error("timeout waiting for fake image")

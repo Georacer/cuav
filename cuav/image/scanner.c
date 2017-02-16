@@ -1516,19 +1516,19 @@ scanner_downsample(PyObject *self, PyObject *args)
 		PyErr_SetString(ScannerError, "input must be 24 bit");
 		return NULL;
 	}
-	if (PyArray_DIM(img_out, 1) != width/2 ||
-	    PyArray_DIM(img_out, 0) != height/2 ||
-	    PyArray_STRIDE(img_out, 0) != 3*(width/2)) {
+	if (PyArray_DIM(img_out, 1) != width/2.5 ||
+	    PyArray_DIM(img_out, 0) != height/2.5 ||
+	    PyArray_STRIDE(img_out, 0) != 3*(width/2.5)) {
 		PyErr_SetString(ScannerError, "output must be half-size 24 bit");
 		return NULL;
 	}
 
         const struct bgr_image *in = allocate_bgr_image8(height, width, PyArray_DATA(img_in));
-	struct bgr_image *out = allocate_bgr_image8(height/2, width/2, NULL);
+	struct bgr_image *out = allocate_bgr_image8(height/2.5, width/2.5, NULL);
 
 	Py_BEGIN_ALLOW_THREADS;
-	for (uint16_t y=0; y<height/2; y++) {
-		for (uint16_t x=0; x<width/2; x++) {
+	for (uint16_t y=0; y<height/2.5; y++) {
+		for (uint16_t x=0; x<width/2.5; x++) {
 			const struct bgr *p0 = &in->data[y*2+0][x*2+0];
 			const struct bgr *p1 = &in->data[y*2+0][x*2+1];
 			const struct bgr *p2 = &in->data[y*2+1][x*2+0];
