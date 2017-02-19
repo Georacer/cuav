@@ -525,6 +525,7 @@ class CameraModule(mp_module.MPModule):
                 last_frame_time = frame_time
                 last_frame_counter = frame_counter
             except camera_driver.error, msg:
+                # print("An error occured: %s" % msg)
                 self.error_count += 1
                 self.error_msg = msg
         if h is not None:
@@ -1141,6 +1142,7 @@ class CameraModule(mp_module.MPModule):
             img = cuav_util.LoadImage(filename, rotate180=self.camera_settings.rotate180, RGB=False)
             img = numpy.asarray(cv.GetMat(img))
         except Exception:
+            print("Failed to load requested image into numpy array")
             return
         if not obj.fullres:
             im_640 = numpy.zeros((480,640,3),dtype='uint8')

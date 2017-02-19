@@ -564,7 +564,7 @@ def LoadImage(filename, rotate180=False, RGB=False):
                 except Exception as e:
                         print('Failed to load %s: %s' % (filename, e))
                         return None
-		im_full = numpy.zeros((960,1280,3),dtype='uint8')
+		im_full = numpy.zeros((1200,1600,3),dtype='uint8')
                 if RGB:
                         scanner.debayer_RGB(pgm.array, im_full)
                 else:
