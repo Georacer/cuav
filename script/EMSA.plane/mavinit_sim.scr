@@ -1,12 +1,12 @@
-set source_system 254
+set source_system 1
 
-output add 192.168.1.101:14650
+output add 127.0.0.1:14650
 
 module load cuav.modules.camera
 module load cuav.modules.cuav_companion
 
-camera set gcs_address 192.168.1.101
-camera set aircraft_address 192.168.1.100
+camera set gcs_address 127.0.0.1
+camera set aircraft_address 127.0.0.1
 camera set gcs_view_port 7543
 camera set aircraft_port 7544
 
@@ -18,8 +18,10 @@ camera set use_bsend2 false
 
 camera set save_pgm 1
 camera set roll_stabilised 0
-camera set minspeed 1
-camera set camparms cuav/cuav/data/calibration_images_2014/ChameleonArecort/params.json
+camera set minspeed 3
+camera set camparms /home/george/EMSA/cuav/cuav/data/calibration_images_2014/ChameleonArecort/params.json
+camera set minscore 4000
+camera set minscore2 4000
+
 set streamrate 2
-set numcells 6
 camera start

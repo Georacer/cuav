@@ -48,8 +48,7 @@ def capture(h, timeout, img):
         time.sleep(due - tnow)
         timeout -= int(due*1000)
     # wait for a new image to appear
-    home_path = os.path.expanduser("~")
-    basepath = home_path + '/flea3_test/'
+    basepath = os.path.expanduser("~/temp_image_folder/")
     while True:
         try:
             # filename = os.path.realpath(fake)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FAKE_CHAMELEON=1
+export FAKE_CAMERA=1
 
 while [ $(date +%s) -lt 1469439272 ]; do
     sleep 2

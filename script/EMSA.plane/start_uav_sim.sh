@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# RUN on the GCS to simulate vehicle movement
+export FAKE_CAMERA=1
 
-# cd /home/odroid/ardupilot/ArduCopter
-cd ${HOME}/ardupilot/ArduCopter
+while [ $(date +%s) -lt 1469439272 ]; do
+    sleep 2
+done
 
-# sim_vehicle.py -C --mav20 --baudrate 115200 --aircraft=EMSA.plane --state-basedir=/home/odroid/cuav/script --console
-sim_vehicle.py -C --mav20 --baudrate 115200 --console --out=udp:192.168.1.100:14550
+mavproxy.py --mav20 --baudrate 115200 --master=udp:127.0.0.1:14750 \
+			--aircraft=EMSA.plane \
+			--state-basedir=${HOME}/EMSA/cuav/script \
+            --cmd="script ${HOME}/EMSA/cuav/script/EMSA.plane/$1"
