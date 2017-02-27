@@ -6,7 +6,7 @@ The API is the same as the chameleon module, but takes images from fake_chameleo
 '''
 
 from . import chameleon
-import time, os, sys, cv, numpy
+import time, os, glob, sys, cv, numpy
 
 from cuav.lib import cuav_util
 from cuav.image import scanner
@@ -51,34 +51,44 @@ def capture(h, timeout, img):
     basepath = os.path.expanduser("~/temp_image_folder/")
     while True:
         try:
-            # filename = os.path.realpath(fake)
-            filename = basepath + fake
+            list_of_files = glob.glob(basepath+'*')
+            if not list_of_files:
+                raise chameleon.error("No image available in specified folder")
+                frame_time = 0
+                break
+            latest_file = max(list_of_files,key=os.path.getctime)
+            filename = latest_file
             # print('Got filename ' + filename)
-        except Exception:
-            filename = fake
-            pass
-        if filename != fake:
+            frame_time = cuav_util.parse_frame_time(filename)
+            # print "Got frame time %f" % frame_time
             break
-    # frame_time = cuav_util.parse_frame_time(filename)
-    frame_time = time.mktime(time.gmtime())
+        except Exception:
+            raise chameleon.error("Unexpected file search error")
+            frame_time = 0
+            break
+            pass
+    # frame_time = time.mktime(time.gmtime())
     # print('Got base frame time %g' % frame_time)
+
+    # If no new image is available
     while (frame_time == last_frame_time or frame_time == 0) and timeout > 0:
         timeout -= 10
         time.sleep(0.01)
         try:
-            # filename = os.path.realpath(fake)
-            filename = basepath + fake
+            list_of_files = glob.glob(basepath+'*')
+            if not list_of_files:
+                raise chameleon.error("No image available in specified folder")
+                continue
+                pass
+            latest_file = max(list_of_files,key=os.path.getctime)
+            filename = latest_file
             # print('Got filename ' + filename)
+            frame_time = cuav_util.parse_frame_time(filename)
+            # print "Got frame time %f on 2nd try" % frame_time
         except Exception:
-            filename = fake
             pass
-        if filename == fake:
-            continue
-        # frame_time = cuav_util.parse_frame_time(filename)
-        frame_time = time.mktime(time.gmtime())
-        # print('Got frame time %f' % frame_time
+
     if last_frame_time == frame_time:
-        # print("timeout waiting for fake image")
         raise chameleon.error("timeout waiting for fake image")
     last_frame_time = frame_time
     try:
@@ -102,14 +112,7 @@ def set_gamma(h, gamma):
 
 def set_framerate(h, framerate):
     global frame_rate
-    if framerate >= 15:
-        frame_rate = 15
-    elif framerate >= 7:
-        frame_rate = 7.5
-    elif framerate >= 3:
-        frame_rate = 3.75
-    else:
-        frame_rate = 1.875;
+    frame_rate = framerate
 
 def save_pgm(filename, img):
     return chameleon.save_pgm(filename, img)
