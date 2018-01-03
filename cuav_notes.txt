@@ -1,0 +1,22 @@
+block_xmit requires an external socket object for non-udp transmissions. modules.camera.py implements this as a MAVLink link
+
+MAVProxy modules prevent message loopback with
+        for mtype in ['DATA16', 'DATA32', 'DATA64', 'DATA96']:
+            self.module('link').no_fwd_types.add(mtype)
+
+I think chameleon resolution is 960*1280? Will probably need to adjust for Flea 3 which is 1600x1200
+
+chameleon is loaded with:
+    import cuav.camera.chameleon as chameleon
+
+and used as:
+        while frame_time is None:
+            try:
+                im = numpy.zeros((960,1280),dtype='uint8' if self.camera_settings.depth==8 else 'uint16')
+                base_time = time.time()
+                chameleon.trigger(h, False)
+                frame_time, frame_counter, shutter = chameleon.capture(h, 1000, im)
+                base_time -= frame_time
+            except chameleon.error:
+                print('failed to capture')
+                error_count += 1
