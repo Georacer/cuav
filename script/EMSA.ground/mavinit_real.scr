@@ -1,4 +1,4 @@
-set streamrate -1
+#set streamrate -1
 set streamrate2 -1
 
 set source_system 254
@@ -13,11 +13,12 @@ set speed_unit m/s
 # Possible output
 # link add udpout:52.63.21.140:10402
 
-link add udp:192.168.1.101:14650
+#link add udp:192.168.1.101:14650
 
 module load cuav.modules.camera
 module load cuav.modules.cuav_check
 
+camera set use_bsend true
 camera set gcs_address 192.168.1.101
 camera set aircraft_address 192.168.1.100
 camera set gcs_view_port 7543
@@ -37,3 +38,5 @@ set numcells 3
 #set speech 0
 module load sensors
 speed
+
+camera view

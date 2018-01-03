@@ -5,4 +5,4 @@ mavproxy.py --baudrate 57600 \
             --state-basedir=/home/george/EMSA/cuav/script \
             --console \
             --map \
-            --cmd="script /home/george/EMSA/cuav/script/EMSA.ground/$1"
+            --cmd="script ${HOME}/EMSA/cuav/script/EMSA.ground/$1"
