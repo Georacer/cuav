@@ -449,7 +449,7 @@ class CameraModule(mp_module.MPModule):
 
         last_successful_capture = None
 
-        while not self.unload_event.wait(0.02):
+        while not self.unload_event.wait(0.5):
             if not self.running:            
                 if h is not None:
                     camera_driver.close(h)

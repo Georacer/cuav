@@ -56,8 +56,10 @@ def capture(h, timeout, img):
                 raise chameleon.error("No image available in specified folder")
                 frame_time = 0
                 break
-            latest_file = max(list_of_files,key=os.path.getctime)
-            filename = latest_file
+            # latest_file = max(list_of_files,key=os.path.getctime)
+            # filename = latest_file
+            files = sorted(list_of_files, key=os.path.getctime, reverse=True)
+            filename = files[1]
             # print('Got filename ' + filename)
             frame_time = cuav_util.parse_frame_time(filename)
             # print "Got frame time %f" % frame_time
