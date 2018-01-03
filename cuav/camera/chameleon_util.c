@@ -73,8 +73,10 @@ int err = (x); \
   } \
 } while (0)
 
-#define IMAGE_HEIGHT 960
-#define IMAGE_WIDTH 1280
+// #define IMAGE_HEIGHT 960
+// #define IMAGE_WIDTH 1280
+#define IMAGE_HEIGHT 1200
+#define IMAGE_WIDTH 1600
 
 #if USE_AUTO_EXPOSURE == 0
 static void get_averages_8(uint8_t *image, size_t stride, float *average,
@@ -187,6 +189,7 @@ static void adjust_shutter(float *shutter, float average, uint32_t num_saturated
 static void camera_setup(chameleon_camera_t *camera, uint8_t depth, 
 			 uint16_t brightness, uint8_t framerate)
 {
+  printf("chameleon_util.c: Entered camera_setup\n");
   CHECK(chameleon_video_set_transmission(camera, DC1394_OFF));
   CHECK(chameleon_camera_reset(camera));
   CHECK(chameleon_video_set_iso_speed(camera, DC1394_ISO_SPEED_400));
@@ -273,13 +276,17 @@ chameleon_camera_t *open_camera(bool colour_chameleon, uint8_t depth, uint16_t b
 {
 	chameleon_camera_t *camera;
 	if (!d) {
+		printf("chameleon_util.c: Creating new chameleon_new object\n");
 		d = chameleon_new();
+		printf("chameleon_util.c: New chameleon_new object created\n");
 	}
 	if (!d) {
+		printf("chameleon_util.c: Failed to create new chameleon_new object, exiting NULL\n");
 		return NULL;
 	}
 
 #if USE_LIBDC1394
+	printf("chameleon_util.c: USE_LIBDC1394 enabled, replacing with a libdc1394 object instead\n");
 	dc1394camera_list_t *list;
 	dc1394error_t err;
 
@@ -290,6 +297,7 @@ chameleon_camera_t *open_camera(bool colour_chameleon, uint8_t depth, uint16_t b
 	camera = dc1394_camera_new(d, list->ids[0].guid);
 	dc1394_camera_free_list(list);
 #else
+	printf("chameleon_util.c: USE_LIBDC1394 disabled, creating a chamelon_camera_new object with d\n");
 	camera = chameleon_camera_new(d, colour_chameleon);
 #endif
 
@@ -309,6 +317,7 @@ chameleon_camera_t *open_camera(bool colour_chameleon, uint8_t depth, uint16_t b
 	return camera;
 
 failed:
+	printf("chameleon_util.c: Failed to create camera object\n");
 	chameleon_free(d);
 	d = NULL;
 	return NULL;
@@ -327,6 +336,7 @@ static unsigned telapsed_msec(const struct timeval *tv)
  */
 int trigger_capture(chameleon_camera_t *c, float shutter, bool continuous)
 {
+	printf("chameleon_util.c: Entered trigger_capture\n");
 	if(!c) {
 		printf("Invalid camera\n");
 		return -1;
@@ -343,8 +353,10 @@ int trigger_capture(chameleon_camera_t *c, float shutter, bool continuous)
 	   - trigger param 0 (image count)
 	*/
 	if (continuous) {
+		printf("chameleon_util.c: Selecting continuous shutter\n");
 		CHECK(chameleon_set_control_register(c, 0x830, 0x82FF0000));
 	} else {
+		printf("chameleon_util.c: Selecting single shutter\n");
 		CHECK(chameleon_set_control_register(c, 0x830, 0x82F00000));
 	}
 
@@ -353,11 +365,13 @@ int trigger_capture(chameleon_camera_t *c, float shutter, bool continuous)
 
 	gettimeofday(&tv0, NULL);
 	do {
+		printf("chameleon_util.c: Checking that software trigger is ready\n");
 		CHECK(chameleon_get_control_register(c, 0x62C, &trigger_v));
 		usleep(1000);
 	} while (telapsed_msec(&tv0) < 300 && (trigger_v & 0x80000000));
 
 	// activate the software trigger
+	printf("chameleon_util.c: Triggering\n");
 	CHECK(chameleon_set_control_register(c, 0x62C, 0x80000000));
 	return 0;
 }
@@ -367,6 +381,7 @@ int capture_wait(chameleon_camera_t *c, float *shutter,
 		 int timeout_ms,
 		 float *frame_time, uint32_t *frame_counter)
 {
+	printf("chameleon_util.c: Entred capture_wait\n");
 	chameleon_frame_t *frame = NULL;
 #if USE_AUTO_EXPOSURE == 0
 	float average;
@@ -380,6 +395,7 @@ int capture_wait(chameleon_camera_t *c, float *shutter,
 		return -1;
 	}
 #if USE_LIBDC1394 == 0
+	printf("chameleon_util.c/capture_wait: calling chameleon_wait_image\n");
 	chameleon_wait_image(c, 600);
 #endif
 	//CHECK(chameleon_get_control_register(c, 0x820, &gain_csr));

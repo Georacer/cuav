@@ -10,7 +10,7 @@
 
 static PyObject *ChameleonError;
 
-#define NUM_CAMERA_HANDLES 2
+#define NUM_CAMERA_HANDLES 1
 
 #ifndef Py_RETURN_NONE
 #define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
@@ -32,6 +32,7 @@ float shutters[NUM_CAMERA_HANDLES] = {
 static PyObject *
 chameleon_open(PyObject *self, PyObject *args)
 {
+	printf("Opening chameleon camera\n");
 	int colour = 0;
 	unsigned short depth = 0;
 	unsigned short brightness;
@@ -52,8 +53,10 @@ chameleon_open(PyObject *self, PyObject *args)
 	int i = 0;
 	for (i = 0; i < NUM_CAMERA_HANDLES; ++i) {
 		if (cameras[i] == NULL) {
+			printf("chameleon_py.c: Calling open_camera\n");
 			struct chameleon_camera *cam = open_camera(colour, depth, brightness);
 			if (cam != NULL) {
+				printf("chameleon.py.c: Assigning camera %d to camera array\n",i);
 				cameras[i] = cam;
 				sts = i;
 				break;
@@ -76,6 +79,7 @@ chameleon_open(PyObject *self, PyObject *args)
 static PyObject *
 chameleon_trigger(PyObject *self, PyObject *args)
 {
+	printf("chameleon_py.c: Entering trigger\n");
 	int handle = -1;
 	int status;
 	struct chameleon_camera* cam = NULL;
@@ -109,6 +113,7 @@ chameleon_trigger(PyObject *self, PyObject *args)
 static PyObject *
 chameleon_capture(PyObject *self, PyObject *args)
 {
+	printf("chameleon_py.c: Entered chameleon_capture\n");
 	int handle = -1;
 	int timeout_ms = 0;
 	struct chameleon_camera* cam = NULL;
@@ -147,6 +152,7 @@ chameleon_capture(PyObject *self, PyObject *args)
 	uint32_t frame_counter=0;
 
 	Py_BEGIN_ALLOW_THREADS;
+	printf("chameleon_py.c/chameleon_capture: calling capture_wait\n");
 	status = capture_wait(cam, &shutters[handle], buf, stride, stride*h, 
 			      timeout_ms, &frame_time, &frame_counter);
 	Py_END_ALLOW_THREADS;

@@ -41,6 +41,7 @@
 #define CHAMELEON_VENDOR_ID 0x1e10
 #define CHAMELEON_PRODUCT_COLOUR 0x2004
 #define CHAMELEON_PRODUCT_MONO   0x2005
+#define FLEA3_PRODUCT_COLOUR   0x3300
 
 #define REG_CAMERA_INITIALIZE               0x000U
 
@@ -325,7 +326,7 @@ struct chameleon *chameleon_new(void)
     struct chameleon *d = calloc (1, sizeof(struct chameleon));
     
     libusb_init(&d->ctx);
-//    libusb_set_debug(d->ctx, 0);
+    libusb_set_debug(d->ctx, 0);
 
     return d;
 }
@@ -339,6 +340,7 @@ void chameleon_free(struct chameleon *d)
 
 struct chameleon_camera *chameleon_camera_new(struct chameleon *d, bool colour_chameleon)
 {
+	printf("chamelon.c: entered contructor of chameleon_camera_new struct\n");
 	struct chameleon_camera *c = calloc(1, sizeof(struct chameleon_camera));
 	int ret;
 
@@ -346,12 +348,15 @@ struct chameleon_camera *chameleon_camera_new(struct chameleon *d, bool colour_c
 	c->base_id = d->base_id;
 	d->base_id += 16;
 	
+	printf("chameleon.c: Opening libusb device\n");
 	c->h = libusb_open_device_with_vid_pid(d->ctx, CHAMELEON_VENDOR_ID, 
-					       colour_chameleon?CHAMELEON_PRODUCT_COLOUR:CHAMELEON_PRODUCT_MONO);
+					       FLEA3_PRODUCT_COLOUR);
 	if (c->h == NULL) {
+		printf("chameleon.c: Failed to open libusb device\n");
 		return NULL;
 	}
 
+	printf("chameleon.c: Claiming libusb interface\n");
 	ret = libusb_claim_interface(c->h, 0);
 	if (ret != 0) {
 		chameleon_camera_free(c);
@@ -915,6 +920,7 @@ chameleon_video_get_data_depth(struct chameleon_camera *camera, uint32_t *depth)
 
 static int capture_basic_setup(struct chameleon_camera *camera, struct chameleon_frame *frame)
 {
+	printf("chameleon.c: Entered capture_basic_setup\n");
 	int err;
 	uint32_t bpp;
 	dc1394video_mode_t video_mode;
@@ -928,6 +934,15 @@ static int capture_basic_setup(struct chameleon_camera *camera, struct chameleon
 
 	err=chameleon_get_image_size_from_video_mode(camera, video_mode, frame->size, frame->size + 1);
 	DC1394_ERR_RTN(err,"Could not get width/height from format/mode");
+	printf("chameleon.c/capture_basic_setup: Setting up camera for %d by %d frame\n", *frame->size, *frame->size+1);
+
+	// Explicitly setting image size
+	frame->size[0] = 1600;
+	frame->size[1] = 1200;
+	// frame->size[0] = 1700;
+	// frame->size[1] = 1300;
+	// frame->size[0] = 1280;
+	// frame->size[1] = 960;
 
 	err=chameleon_video_get_framerate(camera,&framerate);
 	DC1394_ERR_RTN(err, "Unable to get current video framerate");
@@ -1080,6 +1095,7 @@ callback(struct libusb_transfer * transfer)
     if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
 	    printf("usb: Bulk transfer %d failed with code %d (cam=%p)\n",
 		   f->frame.id, transfer->status, craw);
+	    printf("usb: error: %s\n",libusb_error_name(transfer->status));
 	    if (libusb_submit_transfer(f->transfer) == 0) {
 		    printf("resubmit OK\n");
 		    f->active = true;
@@ -1132,6 +1148,7 @@ callback(struct libusb_transfer * transfer)
 
 int chameleon_capture_setup(struct chameleon_camera *c, uint32_t num_dma_buffers, uint32_t flags)
 {
+	printf("chamelecon.c: Entered chameleon_capture_setup\n");
 	int i;
 
 	// if capture is already set, abort
